@@ -1,54 +1,52 @@
-// import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import HomeHeader from "./HomeHeader";
-import HomeModal from "./HomeModal";
 import House from "./House";
-import ThemeToggleSwitch from "./ThemeToggleSwitch";
-import {} from "../api/prayerApi";
+import { getPrayer, GetPrayerResponse } from "../api/prayerApi"; // Import your API function
 
 export function MainLayout() {
-  // const [city, setCity] = useState<string>("New York");
-  // const [prayer, setPrayer] = useState(null);
+  // const [prayerData, setPrayerData] = useState<GetPrayerResponse | null>(null);
   // const [isLoading, setIsLoading] = useState(true);
   // const [error, setError] = useState<string | null>(null);
 
+  // const city = "İstanbul";
+
   // useEffect(() => {
-  //   async function fetchWeather() {
+  //   async function fetchPrayerData() {
   //     try {
-  //       const data = await getWeather(city);
-  //       setWeather(data);
+  //       const data = await getPrayer(city);
+  //       setPrayerData(data);
   //     } catch (err) {
-  //       setError("Failed to fetch weather data.");
+  //       setError("Failed to fetch prayer data.");
   //       console.error(err);
   //     } finally {
   //       setIsLoading(false);
   //     }
   //   }
 
-  //   void fetchWeather();
+  //   void fetchPrayerData();
   // }, [city]);
 
-  // if (isLoading) return <p>Loading...</p>;
-  // if (error || weather === null) return <p>Error loading weather data.</p>;
+  // if (isLoading) return <p>Loading prayer times...</p>;
+  // if (error || !prayerData)
+  //   return <p>{error || "Error loading prayer data."}</p>;
 
-  // const { temp, conditions, high, low } = weather.currentConditions;
-  // const data = {
-  //   hourly: weather.hourlyForecast,
-  //   weekly: weather.weeklyForecast,
-  // };
+  // // Get prayer times for today
+  // const todayPrayerTimes = prayerData.times[Object.keys(prayerData.times)[0]];
+  // const [fajr, dhuhr, asr, maghrib, isha] = todayPrayerTimes;
+
+  // console.log(fajr, isha);
 
   return (
-    <div className="bg-[url(/src/assets/images/background.png)] font-serif w-sm h-3/5 min-h-[800px] m-auto flex flex-col justify-end relative rounded-3xl">
-      <ThemeToggleSwitch />
+    <div className="bg-[url(/src/assets/images/background.png)] font-serif w-sm h-3/5 min-h-[800px] m-auto flex flex-col justify-start relative py-10 rounded-3xl">
       <HomeHeader
-        city={"weather.resolvedAddress"}
-        currentDegree={12}
-        description={"conditions"}
-        high={12}
-        low={12}
+        prayerName={"Asr"}
+        prayerTime={"12:34"}
+        location={"Istanbul, Turkey"}
+        nextPrayerTime={"12:23"}
+        lastPrayerTime={"17:56"}
       />
       <House />
-      <HomeModal />
-      {/* <TabBar /> */}
+      {/* Add other components as needed */}
     </div>
   );
 }
