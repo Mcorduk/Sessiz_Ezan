@@ -1,106 +1,93 @@
-import { IWeatherWidgetData } from "../types/weather";
+import { NON_PRAYER_NAMES, PRAYER_NAMES } from "./const";
 
-export const dummyWeatherData: IWeatherWidgetData = {
-  hourly: [
-    {
-      timeLabel: "12 AM",
-      condition: "cloudy",
-      chanceOfPrecipitation: 20,
-      temperature: 18,
+export const dummyPrayerData = {
+  yesterday: {
+    date: "2025-03-13",
+    prayers: {
+      [PRAYER_NAMES.FAJR]: "05:48",
+      [PRAYER_NAMES.DHUHR]: "13:19",
+      [PRAYER_NAMES.ASR]: "16:38",
+      [PRAYER_NAMES.MAGHRIB]: "19:16",
+      [PRAYER_NAMES.ISHA]: "20:35",
     },
-    {
-      timeLabel: "Now",
-      condition: "rain",
-      chanceOfPrecipitation: 70,
-      temperature: 17,
+    nonPrayerTimes: {
+      [NON_PRAYER_NAMES.SUNRISE]: "07:12",
     },
-    {
-      timeLabel: "2 AM",
-      condition: "clear-day",
-      chanceOfPrecipitation: 10,
-      temperature: 19,
+  },
+  today: {
+    date: "2025-03-14",
+    prayers: {
+      [PRAYER_NAMES.FAJR]: "05:46",
+      [PRAYER_NAMES.DHUHR]: "13:18",
+      [PRAYER_NAMES.ASR]: "16:38",
+      [PRAYER_NAMES.MAGHRIB]: "19:17",
+      [PRAYER_NAMES.ISHA]: "20:36",
     },
-    {
-      timeLabel: "3 AM",
-      condition: "cloudy",
-      chanceOfPrecipitation: 15,
-      temperature: 18,
+    nonPrayerTimes: {
+      [NON_PRAYER_NAMES.SUNRISE]: "07:11",
     },
-    {
-      timeLabel: "4 AM",
-      condition: "wind",
-      chanceOfPrecipitation: 5,
-      temperature: 16,
+  },
+  tomorrow: {
+    date: "2025-03-15",
+    prayers: {
+      [PRAYER_NAMES.FAJR]: "05:44",
+      [PRAYER_NAMES.DHUHR]: "13:18",
+      [PRAYER_NAMES.ASR]: "16:39",
+      [PRAYER_NAMES.MAGHRIB]: "19:18",
+      [PRAYER_NAMES.ISHA]: "20:37",
     },
-    { timeLabel: "5 AM", condition: "fog", temperature: 15 },
-    {
-      timeLabel: "6 AM",
-      condition: "clear-day",
-      chanceOfPrecipitation: 0,
-      temperature: 20,
+    nonPrayerTimes: {
+      [NON_PRAYER_NAMES.SUNRISE]: "07:09",
     },
-    {
-      timeLabel: "7 AM",
-      condition: "rain",
-      chanceOfPrecipitation: 60,
-      temperature: 17,
+  },
+  days: {
+    "2025-03-13": {
+      prayers: {
+        [PRAYER_NAMES.FAJR]: "05:48",
+        [PRAYER_NAMES.DHUHR]: "13:19",
+        [PRAYER_NAMES.ASR]: "16:38",
+        [PRAYER_NAMES.MAGHRIB]: "19:16",
+        [PRAYER_NAMES.ISHA]: "20:35",
+      },
+      nonPrayerTimes: {
+        [NON_PRAYER_NAMES.SUNRISE]: "07:12",
+      },
     },
-    {
-      timeLabel: "8 AM",
-      condition: "cloudy",
-      chanceOfPrecipitation: 30,
-      temperature: 18,
+    "2025-03-14": {
+      prayers: {
+        [PRAYER_NAMES.FAJR]: "05:46",
+        [PRAYER_NAMES.DHUHR]: "13:18",
+        [PRAYER_NAMES.ASR]: "16:38",
+        [PRAYER_NAMES.MAGHRIB]: "19:17",
+        [PRAYER_NAMES.ISHA]: "20:36",
+      },
+      nonPrayerTimes: {
+        [NON_PRAYER_NAMES.SUNRISE]: "07:11",
+      },
     },
-  ],
-  weekly: [
-    {
-      timeLabel: "SAT",
-      condition: "clear-night",
-      chanceOfPrecipitation: 0,
-      temperature: 22,
+    "2025-03-15": {
+      prayers: {
+        [PRAYER_NAMES.FAJR]: "05:44",
+        [PRAYER_NAMES.DHUHR]: "13:18",
+        [PRAYER_NAMES.ASR]: "16:39",
+        [PRAYER_NAMES.MAGHRIB]: "19:18",
+        [PRAYER_NAMES.ISHA]: "20:37",
+      },
+      nonPrayerTimes: {
+        [NON_PRAYER_NAMES.SUNRISE]: "07:09",
+      },
     },
-    {
-      timeLabel: "Now",
-      condition: "rain",
-      chanceOfPrecipitation: 70,
-      temperature: 17,
+    "2025-03-16": {
+      prayers: {
+        [PRAYER_NAMES.FAJR]: "05:42",
+        [PRAYER_NAMES.DHUHR]: "13:18",
+        [PRAYER_NAMES.ASR]: "16:39",
+        [PRAYER_NAMES.MAGHRIB]: "19:19",
+        [PRAYER_NAMES.ISHA]: "20:39",
+      },
+      nonPrayerTimes: {
+        [NON_PRAYER_NAMES.SUNRISE]: "07:07",
+      },
     },
-    {
-      timeLabel: "MON",
-      condition: "cloudy",
-      chanceOfPrecipitation: 20,
-      temperature: 18,
-    },
-    {
-      timeLabel: "TUE",
-      condition: "Stormy",
-      chanceOfPrecipitation: 80,
-      temperature: 15,
-    },
-    {
-      timeLabel: "WED",
-      condition: "clear-night",
-      chanceOfPrecipitation: 5,
-      temperature: 21,
-    },
-    {
-      timeLabel: "THU",
-      condition: "wind",
-      chanceOfPrecipitation: 10,
-      temperature: 19,
-    },
-    { timeLabel: "FRI", condition: "fog", temperature: 16 },
-    {
-      timeLabel: "SAT",
-      condition: "rain",
-      chanceOfPrecipitation: 50,
-      temperature: 17,
-    },
-    {
-      timeLabel: "SUN",
-      condition: "snow",
-      chanceOfPrecipitation: 90,
-      temperature: -2,
-    },
-  ],
+  },
 };
