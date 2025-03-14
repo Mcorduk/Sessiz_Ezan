@@ -1,7 +1,10 @@
-# Tauri + React + Typescript
+-- Think about localization
+-- Think about settings
+-- Location
+-- days
+-- country should be changable
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+-- Get the data
+-- Show the last prayers
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+Cache: When the city changes, data needs to be populated again

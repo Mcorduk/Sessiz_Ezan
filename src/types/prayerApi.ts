@@ -1,3 +1,5 @@
+import { NON_PRAYER_NAMES, PRAYER_NAMES } from "../helpers/const";
+
 export interface PrayerApiResponse {
   times: {
     [date: string]: string[];
@@ -12,11 +14,20 @@ export interface PrayerApiResponse {
   };
 }
 
-export interface GetPrayerResponse extends PrayerApiResponse {
-  currentPrayer: [string, string];
-  lastPrayer: [string, string];
-  nextPrayer: [string, string];
-  todayPrayers: TodayPrayers;
+export interface GetPrayerResponse {
+  yesterday: DayPrayerTimes;
+  today: DayPrayerTimes;
+  tomorrow: DayPrayerTimes;
+  days: FormattedPrayerData;
+
+  place: {
+    country: string;
+    countryCode: string;
+    city: string;
+    region: string;
+    latitude: number;
+    longitude: number;
+  };
 }
 
 interface TodayPrayers {
@@ -26,4 +37,25 @@ interface TodayPrayers {
   asr: string;
   maghrib: string;
   ishaa: string;
+}
+
+interface PrayerTimes {
+  prayers: {
+    [PRAYER_NAMES.FAJR]: string;
+    [PRAYER_NAMES.DHUHR]: string;
+    [PRAYER_NAMES.ASR]: string;
+    [PRAYER_NAMES.MAGHRIB]: string;
+    [PRAYER_NAMES.ISHA]: string;
+  };
+  nonPrayerTimes: {
+    [NON_PRAYER_NAMES.SUNRISE]: string;
+  };
+}
+
+interface DayPrayerTimes extends PrayerTimes {
+  date: string;
+}
+
+export interface FormattedPrayerData {
+  [date: string]: PrayerTimes;
 }
