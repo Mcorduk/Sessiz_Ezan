@@ -3,6 +3,7 @@ import { NON_PRAYER_NAMES, PRAYER_NAMES } from "../helpers/const";
 import { getDays } from "../helpers/helper";
 import {
   FormattedPrayerData,
+  FullPrayerData,
   PrayerApiResponse,
   PrayerTimes,
 } from "../types/prayerApi";
@@ -23,10 +24,6 @@ export async function getPrayer(
   timezoneOffset: number = 180
 ): Promise<GetPrayerResponse> {
   try {
-    const currentTime = new Date();
-    const currentHour = currentTime.getHours();
-    const currentMinutes = currentTime.getMinutes();
-
     const baseUrl = "https://vakit.vercel.app/api/timesFromPlace";
 
     const params = new URLSearchParams({
@@ -50,14 +47,11 @@ export async function getPrayer(
 
     const data = (await response.json()) as PrayerApiResponse;
 
-    const todayPrayerTimes = data.times[today];
+    const formattedDays: FormattedPrayerData = formatDaysData(data.times)
 
-    const todayPrayers = {}
+  const todayPrayerTimes = formattedDays[today]
 
-
-    const days = formatDaysData(data.times)
-
-    if (!todayPrayers) {
+    if (!todayPrayerTimes) {
       throw new Error("No prayer times found for today.");
     }
 
@@ -99,19 +93,86 @@ export async function getPrayer(
 
 // keep the day of when the API call was made in cache, if it's expired make a new call
 // a call should be made everyday(?) (once a week or month is prolly better)
-// sunrise should be seperated
 // times should be put in a storage
-function getCurrentPrayer() {}
-// return an array of name of current Prayer and it's time
-// if current Prayer is fajr, last prayer is going to be taken from yesterday
-// if current Prayer is ishaa, but time hours is not between ishaa time and 24:00
-//    last prayer and current prayer will be taken from yesterday
-//    next prayer will be taken from today
-// if current Prayer is ishaa, but time hours is between ishaa time and 24:00
-//
-//
 
-// data.times
+export function getCurrentPrayer(prayerData:FullPrayerData): {
+  lastPrayer: {name:string; time: string} | null;
+  currentPrayer: { name:string; time:string} | null;
+  nextPrayer: {name: string; time:string} | null;
+} {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+
+  const yesterdaysPrayers = prayerData.yesterday.prayers;
+  const todayPrayers = prayerData.today.prayers;
+  const tomorrowPrayers = prayerData.tomorrow.prayers
+
+  const prayerEntries = Object.entries(todayPrayers.prayers)
+
+  let lastPrayer = null;
+  let currentPrayer = null;
+  let nextPrayer = null;
+
+  for(let i = 0; i < prayerEntries.length; i++) {
+    const [prayerName, prayerTime] = prayerEntries[i]
+    const [hours, minutes] = prayerTime.split(":").map(Number)
+
+    if (currentHour > hours || (currentHour === hours && currentMinute >= minutes)) {
+      lastPrayer = { name: prayerName, time: prayerTime };
+      currentPrayer = prayerEntries[i + 1]
+        ? { name: prayerEntries[i + 1][0], time: prayerEntries[i + 1][1] }
+        : null;
+      nextPrayer = prayerEntries[i + 2]
+        ? { name: prayerEntries[i + 2][0], time: prayerEntries[i + 2][1] }
+        : null;
+    }
+  }
+
+  // Handling special cases for Fajr and Isha
+  if(currentPrayer?.name === PRAYER_NAMES.FAJR) {
+    lastPrayer = {
+      name: PRAYER_NAMES.ISHA,
+      time: yesterdaysPrayers.prayers[PRAYER_NAMES.ISHA]
+    }
+    nextPrayer = {
+      name: PRAYER_NAMES.DHUHR,
+      time: todayPrayers.prayers[PRAYER_NAMES.DHUHR]
+    }
+  } else if (lastPrayer?.name === PRAYER_NAMES.ISHA && currentHour >= 0) {
+    // If we are past midnight but before fajr, lastPrayer is yesterday's Isha
+    lastPrayer = {
+      name: PRAYER_NAMES.ISHA,
+      time: yesterdaysPrayers.prayers[PRAYER_NAMES.ISHA],
+    }
+    currentPrayer = {
+      name: PRAYER_NAMES.FAJR,
+      time: todayPrayers.prayers[PRAYER_NAMES.FAJR]
+    }
+    nextPrayer = {
+      name: PRAYER_NAMES.DHUHR,
+      time: todayPrayers.prayers[PRAYER_NAMES.DHUHR]
+    }
+  }
+
+  //If Isha has passed today, next prayer should be tomorrow's fajr
+  if (!currentPrayer) {
+    lastPrayer = {
+      name: PRAYER_NAMES.ISHA,
+      time: todayPrayers.prayers[PRAYER_NAMES.ISHA],
+    };
+    currentPrayer = {
+      name: PRAYER_NAMES.FAJR,
+      time: tomorrowPrayers.prayers[PRAYER_NAMES.FAJR],
+    };
+    nextPrayer = {
+      name: PRAYER_NAMES.DHUHR,
+      time: tomorrowPrayers.prayers[PRAYER_NAMES.DHUHR],
+    };
+  }
+
+  return {lastPrayer, currentPrayer, nextPrayer}
+}
 
 function formatDaysData(data: { [date: string]: string[] }) {
   const formattedData: FormattedPrayerData = {};
@@ -132,19 +193,4 @@ function formatDaysData(data: { [date: string]: string[] }) {
   }
 
   return {};
-}
-export interface GetPrayerResponse {
-  yesterday: DayPrayerTimes;
-  today: DayPrayerTimes;
-  tomorrow: DayPrayerTimes;
-  days: FormattedPrayerData;
-
-  place: {
-    country: string;
-    countryCode: string;
-    city: string;
-    region: string;
-    latitude: number;
-    longitude: number;
-  };
 }
