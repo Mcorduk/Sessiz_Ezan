@@ -59,3 +59,14 @@ interface DayPrayerTimes extends PrayerTimes {
 export interface FormattedPrayerData {
   [date: string]: PrayerTimes;
 }
+
+interface DailyPrayerData {
+  date: string;
+  prayers: PrayerTimes;
+}
+
+export interface FullPrayerData {
+  yesterday: DailyPrayerData;
+  today: DailyPrayerData;
+  tomorrow: DailyPrayerData;
+}
