@@ -100,7 +100,7 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
   let nextPrayer = null;
 
   for (let i = 0; i < prayerEntries.length; i++) {
-    const [prayerName, prayerTime] = prayerEntries[i];
+    const [prayerName, prayerTime]: [string, string] = prayerEntries[i];
     const [hours, minutes] = prayerTime.split(":").map(Number);
 
     if (
@@ -121,25 +121,25 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
   if (currentPrayer?.name === PRAYER_NAMES.FAJR) {
     lastPrayer = {
       name: PRAYER_NAMES.ISHA,
-      time: yesterdaysPrayers.prayers[PRAYER_NAMES.ISHA],
+      time: yesterdaysPrayers.prayers[PRAYER_NAMES.ISHA] as string,
     };
     nextPrayer = {
       name: PRAYER_NAMES.DHUHR,
-      time: todayPrayers.prayers[PRAYER_NAMES.DHUHR],
+      time: todayPrayers.prayers[PRAYER_NAMES.DHUHR] as string,
     };
   } else if (lastPrayer?.name === PRAYER_NAMES.ISHA && currentHour >= 0) {
     // If we are past midnight but before fajr, lastPrayer is yesterday's Isha
     lastPrayer = {
       name: PRAYER_NAMES.ISHA,
-      time: yesterdaysPrayers.prayers[PRAYER_NAMES.ISHA],
+      time: yesterdaysPrayers.prayers[PRAYER_NAMES.ISHA] as string,
     };
     currentPrayer = {
       name: PRAYER_NAMES.FAJR,
-      time: todayPrayers.prayers[PRAYER_NAMES.FAJR],
+      time: todayPrayers.prayers[PRAYER_NAMES.FAJR] as string,
     };
     nextPrayer = {
       name: PRAYER_NAMES.DHUHR,
-      time: todayPrayers.prayers[PRAYER_NAMES.DHUHR],
+      time: todayPrayers.prayers[PRAYER_NAMES.DHUHR] as string,
     };
   }
 
@@ -147,15 +147,15 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
   if (!currentPrayer) {
     lastPrayer = {
       name: PRAYER_NAMES.ISHA,
-      time: todayPrayers.prayers[PRAYER_NAMES.ISHA],
+      time: todayPrayers.prayers[PRAYER_NAMES.ISHA] as string,
     };
     currentPrayer = {
       name: PRAYER_NAMES.FAJR,
-      time: tomorrowPrayers.prayers[PRAYER_NAMES.FAJR],
+      time: tomorrowPrayers.prayers[PRAYER_NAMES.FAJR] as string,
     };
     nextPrayer = {
       name: PRAYER_NAMES.DHUHR,
-      time: tomorrowPrayers.prayers[PRAYER_NAMES.DHUHR],
+      time: tomorrowPrayers.prayers[PRAYER_NAMES.DHUHR] as string,
     };
   }
 
