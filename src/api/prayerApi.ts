@@ -57,13 +57,13 @@ export async function getPrayer(
 
     // Get current prayer details from helper function
     const { currentPrayer, lastPrayer, nextPrayer } = getCurrentPrayer({
-      yesterday: formattedDays[yesterday],
-      today: formattedDays[today],
-      tomorrow: formattedDays[tomorrow],
+      yesterday: { date: yesterday, prayers: formattedDays[yesterday] },
+      today: { date: today, prayers: formattedDays[today] },
+      tomorrow: { date: tomorrow, prayers: formattedDays[tomorrow] },
     });
 
     return {
-      days,
+      days: data.times,
       place: data.place,
       currentPrayer,
       lastPrayer,
