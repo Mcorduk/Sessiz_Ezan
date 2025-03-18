@@ -15,9 +15,6 @@ export interface PrayerApiResponse {
 }
 
 export interface GetPrayerResponse {
-  yesterday: DayPrayerTimes;
-  today: DayPrayerTimes;
-  tomorrow: DayPrayerTimes;
   currentPrayer: { name: string; time: string };
   lastPrayer: { name: string; time: string };
   nextPrayer: { name: string; time: string };
@@ -32,14 +29,14 @@ export interface GetPrayerResponse {
   };
 }
 
-interface TodayPrayers {
-  fajr: string;
-  sunrise: string;
-  dhuhr: string;
-  asr: string;
-  maghrib: string;
-  ishaa: string;
-}
+// interface TodayPrayers {
+//   fajr: string;
+//   sunrise: string;
+//   dhuhr: string;
+//   asr: string;
+//   maghrib: string;
+//   ishaa: string;
+// }
 
 interface PrayerTimes {
   prayers: {
@@ -54,7 +51,7 @@ interface PrayerTimes {
   };
 }
 
-interface DayPrayerTimes extends PrayerTimes {
+export interface DayPrayerTimes extends PrayerTimes {
   date: string;
 }
 

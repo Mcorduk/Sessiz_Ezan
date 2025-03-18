@@ -1,11 +1,10 @@
-import { Key } from "lucide-react";
 import { NON_PRAYER_NAMES, PRAYER_NAMES } from "../helpers/const";
 import { getDays } from "../helpers/helper";
 import {
+  DayPrayerTimes,
   FormattedPrayerData,
   FullPrayerData,
   PrayerApiResponse,
-  PrayerTimes,
 } from "../types/prayerApi";
 import { GetPrayerResponse } from "../types/prayerApi";
 
@@ -51,15 +50,28 @@ export async function getPrayer(
     const formattedDays: FormattedPrayerData = formatDaysData(data.times);
     const todayPrayerTimes = formattedDays[today];
 
-    if (!todayPrayerTimes) {
-      throw new Error("No prayer times found for today.");
-    }
+    // if (!todayPrayerTimes) {
+    //   throw new Error("No prayer times found for today.");
+    // }
 
+    const yesterdayPrayers = {
+      date: yesterday,
+      prayers: formattedDays[yesterday],
+    };
+    const todayPrayers = {
+      date: today,
+      prayers: formattedDays[today],
+      nonPrayerTimes: undefined,
+    };
+    const tomorrowPrayers = {
+      date: tomorrow,
+      prayers: formattedDays[tomorrow],
+    };
     // Get current prayer details from helper function
     const { currentPrayer, lastPrayer, nextPrayer } = getCurrentPrayer({
-      yesterday: { date: yesterday, prayers: formattedDays[yesterday] },
-      today: { date: today, prayers: formattedDays[today] },
-      tomorrow: { date: tomorrow, prayers: formattedDays[tomorrow] },
+      yesterday: yesterdayPrayers,
+      today: todayPrayers,
+      tomorrow: tomorrowPrayers,
     });
 
     if (!currentPrayer || !lastPrayer || !nextPrayer) {
@@ -167,23 +179,21 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
 
 function formatDaysData(
   times: PrayerApiResponse["times"]
-): Record<string, DailyPrayerData> {
-  const formattedData: Record<string, DailyPrayerData> = {};
+): Record<string, DayPrayerTimes> {
+  const formattedData: Record<string, DayPrayerTimes> = {};
 
   for (const [date, prayers] of Object.entries(times)) {
     formattedData[date] = {
-      date, // Ensure the date property is included
+      date,
       prayers: {
-        prayers: {
-          [PRAYER_NAMES.FAJR]: prayers[0],
-          [PRAYER_NAMES.DHUHR]: prayers[2],
-          [PRAYER_NAMES.ASR]: prayers[3],
-          [PRAYER_NAMES.MAGHRIB]: prayers[4],
-          [PRAYER_NAMES.ISHA]: prayers[5],
-        },
-        nonPrayerTimes: {
-          [NON_PRAYER_NAMES.SUNRISE]: prayers[1],
-        },
+        [PRAYER_NAMES.FAJR]: prayers[0],
+        [PRAYER_NAMES.DHUHR]: prayers[2],
+        [PRAYER_NAMES.ASR]: prayers[3],
+        [PRAYER_NAMES.MAGHRIB]: prayers[4],
+        [PRAYER_NAMES.ISHA]: prayers[5],
+      },
+      nonPrayerTimes: {
+        [NON_PRAYER_NAMES.SUNRISE]: prayers[1],
       },
     };
   }
