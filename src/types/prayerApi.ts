@@ -18,8 +18,10 @@ export interface GetPrayerResponse {
   yesterday: DayPrayerTimes;
   today: DayPrayerTimes;
   tomorrow: DayPrayerTimes;
-  days: FormattedPrayerData;
-
+  currentPrayer: { name: string; time: string };
+  lastPrayer: { name: string; time: string };
+  nextPrayer: { name: string; time: string };
+  todayPrayers: { [x: string]: string };
   place: {
     country: string;
     countryCode: string;

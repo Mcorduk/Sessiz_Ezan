@@ -62,8 +62,11 @@ export async function getPrayer(
       tomorrow: { date: tomorrow, prayers: formattedDays[tomorrow] },
     });
 
+    if (!currentPrayer || !lastPrayer || !nextPrayer) {
+      throw new Error("No Prayer info");
+    }
+
     return {
-      days: data.times,
       place: data.place,
       currentPrayer,
       lastPrayer,
