@@ -1,39 +1,52 @@
-import { ForecastType, IWeatherData } from "../types";
-import { formatTimeLabel } from "../helpers/helper";
+import { useTranslation } from "react-i18next";
+import { NON_PRAYER_NAMES, PRAYER_NAMES } from "../helpers/const";
+import { PrayerTimes } from "../types/prayerApi";
 
 export interface IHorizontalForecastProps {
-  forecast: IWeatherData;
-  forecastType: ForecastType;
+  todayPrayers: PrayerTimes | null;
 }
 
 export default function HorizontalForecast({
-  forecast,
-  forecastType,
+  todayPrayers,
 }: IHorizontalForecastProps) {
-  const { timeLabel, condition, temperature, chanceOfPrecipitation } = forecast;
-  const isCurrentTime = ["Now", "Today"].includes(timeLabel);
+  const { t } = useTranslation();
+
+  if (!todayPrayers) {
+    throw new Error("Today Prayers could not be found");
+  }
+  const { prayers, nonPrayerTimes } = todayPrayers;
+
+  // Define the order of the prayers and the non-prayer times
+  const prayerOrder = [
+    PRAYER_NAMES.FAJR,
+    NON_PRAYER_NAMES.SUNRISE,
+    PRAYER_NAMES.DHUHR,
+    PRAYER_NAMES.ASR,
+    PRAYER_NAMES.MAGHRIB,
+    PRAYER_NAMES.ISHA,
+  ];
 
   return (
-    <div
-      className={`content min-w-[60px] min-h-[140px] flex flex-col justify-around border border-gray-500 rounded-4xl py-2 shadow ${
-        isCurrentTime ? "bg-solid-blue" : "inactive"
-      }`}
-    >
-      <p>{formatTimeLabel(timeLabel, forecastType)}</p>
-      <div>
-        <img
-          src={`/src/assets/images/icons/small/${condition}.png`}
-          alt={condition}
-        />
-        <div className="text-sm font-normal min-h-[20px] flex items-center justify-center text-blue-300">
-          {chanceOfPrecipitation > 0 ? (
-            <p>{chanceOfPrecipitation}%</p>
-          ) : (
-            <p>&nbsp;</p>
-          )}
+    <div className="flex space-x-4">
+      {prayerOrder.map((prayer) => (
+        <div
+          key={prayer}
+          className={`content min-w-[60px] min-h-max flex flex-col justify-start rounded-4xl py-2 shadow`}
+        >
+          <p>
+            {/* Translate the prayer name based on the type (prayer or non-prayer) */}
+            {prayer === NON_PRAYER_NAMES.SUNRISE
+              ? t(`nonPrayers.${prayer}`)
+              : t(`prayers.${prayer}`)}
+          </p>
+          <p>
+            {/* Display the time for prayer or non-prayer */}
+            {prayer === NON_PRAYER_NAMES.SUNRISE
+              ? nonPrayerTimes[prayer]
+              : prayers[prayer]}
+          </p>
         </div>
-      </div>
-      <p>{temperature}°C</p>
+      ))}
     </div>
   );
 }
