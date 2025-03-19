@@ -22,7 +22,7 @@ export interface GetPrayerResponse {
   currentPrayer: SinglePrayerTime;
   lastPrayer: SinglePrayerTime;
   nextPrayer: SinglePrayerTime;
-  todayPrayers: { [x: string]: string };
+  todayPrayers: PrayerTimes;
   place: {
     country: string;
     countryCode: string;
@@ -33,16 +33,7 @@ export interface GetPrayerResponse {
   };
 }
 
-// interface TodayPrayers {
-//   fajr: string;
-//   sunrise: string;
-//   dhuhr: string;
-//   asr: string;
-//   maghrib: string;
-//   ishaa: string;
-// }
-
-interface PrayerTimes {
+export interface PrayerTimes {
   prayers: {
     [PRAYER_NAMES.FAJR]: string;
     [PRAYER_NAMES.DHUHR]: string;

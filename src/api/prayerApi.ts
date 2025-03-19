@@ -83,7 +83,7 @@ export async function getPrayer(
       currentPrayer,
       lastPrayer,
       nextPrayer,
-      todayPrayers: todayPrayerTimes.prayers,
+      todayPrayers: todayPrayerTimes,
     };
   } catch (error) {
     console.error("Prayer API error:", error);
