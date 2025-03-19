@@ -13,11 +13,15 @@ export interface PrayerApiResponse {
     longitude: number;
   };
 }
+export interface SinglePrayerTime {
+  name: string;
+  time: string;
+}
 
 export interface GetPrayerResponse {
-  currentPrayer: { name: string; time: string };
-  lastPrayer: { name: string; time: string };
-  nextPrayer: { name: string; time: string };
+  currentPrayer: SinglePrayerTime;
+  lastPrayer: SinglePrayerTime;
+  nextPrayer: SinglePrayerTime;
   todayPrayers: { [x: string]: string };
   place: {
     country: string;
