@@ -1,15 +1,15 @@
 import { ForecastType, IWeatherData } from "../types";
 import { formatTimeLabel } from "../helpers/helper";
 
-export interface IVerticalForecastProps {
+export interface IHorizontalForecastProps {
   forecast: IWeatherData;
   forecastType: ForecastType;
 }
 
-export default function VerticalForecast({
+export default function HorizontalForecast({
   forecast,
   forecastType,
-}: IVerticalForecastProps) {
+}: IHorizontalForecastProps) {
   const { timeLabel, condition, temperature, chanceOfPrecipitation } = forecast;
   const isCurrentTime = ["Now", "Today"].includes(timeLabel);
 

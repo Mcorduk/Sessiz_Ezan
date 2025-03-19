@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { capitalizeFirstLetter, getDays } from "../helpers/helper";
 import { SinglePrayerTime } from "../types/prayerApi";
 import { format } from "date-fns";
+import { tr, enUS } from "date-fns/locale";
 
 export interface IHomeHeaderProps {
   currentPrayer: SinglePrayerTime;
@@ -16,30 +16,37 @@ export default function HomeHeader({
   nextPrayer,
   lastPrayer,
 }: IHomeHeaderProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  const today = format(new Date(), "MMMM dd, y");
+  const locale = i18n.language === "tr" ? tr : enUS;
+  const today = format(new Date(), "MMMM dd, y", { locale });
+
+  if (!lastPrayer) {
+    throw new Error("Last Prayer data not found");
+  } else if (!nextPrayer) {
+    throw new Error("Next Prayer data not found");
+  }
 
   return (
     <div className="flex flex-col max-w-fit mx-auto mb-6 text-xl">
-      <h1>{t("greeting", { name: "Tauri User" })}</h1>
+      {/* <h1>{t("greetings.greeting", { name: "Tauri User" })}</h1> */}
+      <p className=" text-xl font-light pb-4">{`${location} · ${today}`}</p>
       <h2 className="text-4xl font-normal">
-        {capitalizeFirstLetter(currentPrayer.name)}
+        {t(`prayers.${currentPrayer.name}`)}
       </h2>
       <h1 className="text-8xl font-light">{currentPrayer.time}</h1>
-      <p className=" text-2xl font-light ">{`${location} · ${today}`}</p>
-      <div className="flex justify-around">
+      <div className="flex justify-between gap-5">
         <div>
-          <p>Last</p>
+          <p>{t("misc.last")}</p>
           <p>
-            {capitalizeFirstLetter(lastPrayer?.name)}: {lastPrayer?.time}
+            {t(`prayers.${lastPrayer.name}`)}: {lastPrayer.time}
           </p>
         </div>
 
         <div>
-          <p>Next</p>
+          <p>{t("misc.next")}</p>
           <p>
-            {capitalizeFirstLetter(nextPrayer?.name)}: {nextPrayer?.time}
+            {t(`prayers.${nextPrayer.name}`)}: {nextPrayer.time}
           </p>
         </div>
       </div>

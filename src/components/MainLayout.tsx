@@ -51,8 +51,6 @@ export function MainLayout() {
         nextPrayer={nextPrayer}
         lastPrayer={lastPrayer}
       />
-      <House />
-      {/* Add other components as needed */}
     </div>
   );
 }

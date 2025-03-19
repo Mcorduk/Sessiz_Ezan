@@ -1,4 +1,4 @@
-import VerticalForecast from "./VerticalForecast";
+import VerticalForecast from "./HorizontalForecast";
 
 export interface IWeatherWidgetProps {}
 
