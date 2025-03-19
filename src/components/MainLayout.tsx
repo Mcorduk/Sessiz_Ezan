@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import HomeHeader from "./HomeHeader";
 import House from "./House";
-import { getPrayer, GetPrayerResponse } from "../api/prayerApi"; // Import your API function
+import { getPrayer } from "../api/prayerApi"; // Import your API function
 import { SinglePrayerTime } from "../types/prayerApi";
 
 export function MainLayout() {
@@ -47,7 +47,7 @@ export function MainLayout() {
     <div className="bg-[url(/src/assets/images/background.png)] font-serif w-sm h-3/5 min-h-[800px] m-auto flex flex-col justify-start relative py-10 rounded-3xl">
       <HomeHeader
         currentPrayer={currentPrayer}
-        location={"Istanbul, Turkey"}
+        location={"Istanbul"}
         nextPrayer={nextPrayer}
         lastPrayer={lastPrayer}
       />

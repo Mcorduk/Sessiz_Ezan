@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { capitalizeFirstLetter } from "../helpers/helper";
+import { capitalizeFirstLetter, getDays } from "../helpers/helper";
 import { SinglePrayerTime } from "../types/prayerApi";
+import { format } from "date-fns";
 
 export interface IHomeHeaderProps {
   currentPrayer: SinglePrayerTime;
@@ -17,6 +18,8 @@ export default function HomeHeader({
 }: IHomeHeaderProps) {
   const { t } = useTranslation();
 
+  const today = format(new Date(), "MMMM dd, y");
+
   return (
     <div className="flex flex-col max-w-fit mx-auto mb-6 text-xl">
       <h1>{t("greeting", { name: "Tauri User" })}</h1>
@@ -24,14 +27,21 @@ export default function HomeHeader({
         {capitalizeFirstLetter(currentPrayer.name)}
       </h2>
       <h1 className="text-8xl font-light">{currentPrayer.time}</h1>
-      <p className=" text-2xl font-light ">{location}</p>
+      <p className=" text-2xl font-light ">{`${location} · ${today}`}</p>
       <div className="flex justify-around">
-        <p>
-          {capitalizeFirstLetter(lastPrayer?.name)}: {lastPrayer?.time}
-        </p>
-        <p>
-          {capitalizeFirstLetter(nextPrayer?.name)}: {nextPrayer?.time}
-        </p>
+        <div>
+          <p>Last</p>
+          <p>
+            {capitalizeFirstLetter(lastPrayer?.name)}: {lastPrayer?.time}
+          </p>
+        </div>
+
+        <div>
+          <p>Next</p>
+          <p>
+            {capitalizeFirstLetter(nextPrayer?.name)}: {nextPrayer?.time}
+          </p>
+        </div>
       </div>
     </div>
   );
