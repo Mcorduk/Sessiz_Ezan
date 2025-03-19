@@ -27,11 +27,13 @@ export default function HorizontalForecast({
   ];
 
   return (
-    <div className="flex space-x-4">
+    <div className="flex justify-around space-x-3 text-sm px-2">
       {prayerOrder.map((prayer) => (
         <div
           key={prayer}
-          className={`content min-w-[60px] min-h-max flex flex-col justify-start rounded-4xl py-2 shadow`}
+          className={`content min-w-[50px] min-h-max flex flex-col justify-start rounded-2xl py-2 shadow ${
+            prayer === NON_PRAYER_NAMES.SUNRISE ? "text-blue-300" : ""
+          }`}
         >
           <p>
             {/* Translate the prayer name based on the type (prayer or non-prayer) */}
