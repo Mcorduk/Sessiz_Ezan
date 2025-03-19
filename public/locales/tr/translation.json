@@ -1,3 +1,16 @@
 {
-  "greeting": "Merhaba, {{name}}!"
+  "greetings": {
+    "greeting": "Merhaba, {{name}}!"
+  },
+  "prayers": {
+    "fajr": "Sabah",
+    "dhuhr": "Öğle",
+    "asr": "İkindi",
+    "maghrib": "Akşam",
+    "isha": "Yatsı"
+  },
+  "misc": {
+    "last": "Önceki",
+    "next": "Sonraki"
+  }
 }
