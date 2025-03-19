@@ -1,31 +1,34 @@
 import { useEffect, useState } from "react";
 import HomeHeader from "./HomeHeader";
-import House from "./House";
 import { getPrayer } from "../api/prayerApi"; // Import your API function
-import { SinglePrayerTime } from "../types/prayerApi";
+import { PrayerTimes, SinglePrayerTime } from "../types/prayerApi";
+import { useTranslation } from "react-i18next";
+import HorizontalForecast from "./HorizontalForecast";
 
 export function MainLayout() {
+  const { t } = useTranslation();
+
+  const [city, setCity] = useState("İstanbul");
   const [currentPrayer, setCurrentPrayer] = useState<SinglePrayerTime | null>(
     null
   );
   const [nextPrayer, setNextPrayer] = useState<SinglePrayerTime | null>(null);
   const [lastPrayer, setLastPrayer] = useState<SinglePrayerTime | null>(null);
-  const [todayPrayers, setTodayPrayers] = useState<{
-    [x: string]: string; //fix me
-  } | null>(null);
+  const [todayPrayers, setTodayPrayers] = useState<PrayerTimes | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const city = "İstanbul";
 
   useEffect(() => {
     async function fetchPrayerData() {
       try {
         const data = await getPrayer(city);
+        setCity(data.place.city);
+
         setCurrentPrayer(data.currentPrayer);
         setTodayPrayers(data.todayPrayers);
         setLastPrayer(data.lastPrayer);
         setNextPrayer(data.nextPrayer);
+        setTodayPrayers(data.todayPrayers);
       } catch (err) {
         setError("Failed to fetch prayer data.");
         console.error(err);
@@ -37,20 +40,19 @@ export function MainLayout() {
     void fetchPrayerData();
   }, [city]);
 
-  if (isLoading) return <p>Loading prayer times...</p>;
+  if (isLoading) return <p>{t("homeLoading")}</p>;
   if (error || !currentPrayer)
     return <p>{error || "Error loading prayer data."}</p>;
-
-  // Get prayer times for today
 
   return (
     <div className="bg-[url(/src/assets/images/background.png)] font-serif w-sm h-3/5 min-h-[800px] m-auto flex flex-col justify-start relative py-10 rounded-3xl">
       <HomeHeader
         currentPrayer={currentPrayer}
-        location={"Istanbul"}
+        location={city}
         nextPrayer={nextPrayer}
         lastPrayer={lastPrayer}
       />
+      <HorizontalForecast todayPrayers={todayPrayers} />
     </div>
   );
 }

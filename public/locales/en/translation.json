@@ -9,8 +9,13 @@
     "maghrib": "Maghrib",
     "isha": "Isha"
   },
+  "nonPrayers": {
+    "sunrise": "Sunrise"
+  },
   "misc": {
     "last": "Last",
-    "next": "Next"
+    "next": "Next",
+    "homeLoading": "Loading Prayer Times...",
+    "End of Fast": "End of Fast"
   }
 }

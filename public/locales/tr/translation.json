@@ -9,8 +9,13 @@
     "maghrib": "Akşam",
     "isha": "Yatsı"
   },
+  "nonPrayers": {
+    "sunrise": "İmsak"
+  },
   "misc": {
     "last": "Önceki",
-    "next": "Sonraki"
+    "next": "Sonraki",
+    "homeLoading": "Namaz vakitleri yükleniyor...",
+    "End of Fast": "İftar Vaktine"
   }
 }
