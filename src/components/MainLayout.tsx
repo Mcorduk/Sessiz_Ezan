@@ -4,6 +4,8 @@ import { getPrayer } from "../api/prayerApi"; // Import your API function
 import { PrayerTimes, SinglePrayerTime } from "../types/prayerApi";
 import { useTranslation } from "react-i18next";
 import HorizontalForecast from "./HorizontalForecast";
+import Tag from "./Tag";
+import { PRAYER_NAMES } from "../helpers/const";
 
 export function MainLayout() {
   const { t } = useTranslation();
@@ -40,12 +42,16 @@ export function MainLayout() {
     void fetchPrayerData();
   }, [city]);
 
+  const timeLeftToFast = "02:12";
   if (isLoading) return <p>{t("homeLoading")}</p>;
   if (error || !currentPrayer)
     return <p>{error || "Error loading prayer data."}</p>;
 
   return (
     <div className="bg-[url(/src/assets/images/background.png)] font-serif w-sm h-3/5 min-h-[800px] m-auto flex flex-col justify-start relative py-10 rounded-3xl">
+      <Tag
+        maghribTime={todayPrayers?.prayers[PRAYER_NAMES.MAGHRIB]}
+      >{`${t("misc.endOfFast")}: ${timeLeftToFast}`}</Tag>
       <HomeHeader
         currentPrayer={currentPrayer}
         location={city}
