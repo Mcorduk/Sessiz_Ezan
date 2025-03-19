@@ -46,11 +46,10 @@ export function MainLayout() {
   return (
     <div className="bg-[url(/src/assets/images/background.png)] font-serif w-sm h-3/5 min-h-[800px] m-auto flex flex-col justify-start relative py-10 rounded-3xl">
       <HomeHeader
-        prayerName={currentPrayer.name}
-        prayerTime={currentPrayer.time}
+        currentPrayer={currentPrayer}
         location={"Istanbul, Turkey"}
-        nextPrayerTime={nextPrayer?.time}
-        lastPrayerTime={lastPrayer?.time}
+        nextPrayer={nextPrayer}
+        lastPrayer={lastPrayer}
       />
       <House />
       {/* Add other components as needed */}

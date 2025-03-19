@@ -1,20 +1,19 @@
 import { useTranslation } from "react-i18next";
 import { capitalizeFirstLetter } from "../helpers/helper";
+import { SinglePrayerTime } from "../types/prayerApi";
 
 export interface IHomeHeaderProps {
-  prayerName: string;
-  prayerTime: string;
+  currentPrayer: SinglePrayerTime;
   location: string;
-  nextPrayerTime: string | undefined;
-  lastPrayerTime: string | undefined;
+  nextPrayer: SinglePrayerTime | null;
+  lastPrayer: SinglePrayerTime | null;
 }
 
 export default function HomeHeader({
-  prayerName,
-  prayerTime,
+  currentPrayer,
   location,
-  nextPrayerTime,
-  lastPrayerTime,
+  nextPrayer,
+  lastPrayer,
 }: IHomeHeaderProps) {
   const { t } = useTranslation();
 
@@ -22,13 +21,17 @@ export default function HomeHeader({
     <div className="flex flex-col max-w-fit mx-auto mb-6 text-xl">
       <h1>{t("greeting", { name: "Tauri User" })}</h1>
       <h2 className="text-4xl font-normal">
-        {capitalizeFirstLetter(prayerName)}
+        {capitalizeFirstLetter(currentPrayer.name)}
       </h2>
-      <h1 className="text-8xl font-light">{prayerTime}</h1>
+      <h1 className="text-8xl font-light">{currentPrayer.time}</h1>
       <p className=" text-2xl font-light ">{location}</p>
       <div className="flex justify-around">
-        <p>Last: {lastPrayerTime}</p>
-        <p>Next: {nextPrayerTime}</p>
+        <p>
+          {capitalizeFirstLetter(lastPrayer?.name)}: {lastPrayer?.time}
+        </p>
+        <p>
+          {capitalizeFirstLetter(nextPrayer?.name)}: {nextPrayer?.time}
+        </p>
       </div>
     </div>
   );
