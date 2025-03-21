@@ -1,4 +1,8 @@
-import { BaseDirectory, readTextFile } from "@tauri-apps/plugin-fs";
+import {
+  BaseDirectory,
+  readTextFile,
+  writeTextFile,
+} from "@tauri-apps/plugin-fs";
 import { GetPrayerResponse } from "../types/prayerApi";
 import { PRAYER_CACHE_FILE } from "./const";
 
@@ -40,7 +44,14 @@ async function getPrayersFromCache(
     });
 
     if (!data) return null;
-  } catch {}
+
+    const parsedData = JSON.parse(data);
+
+    return parsedData[city] || null;
+  } catch (error) {
+    console.warn("No cached prayer time found:", error);
+    return null;
+  }
 }
 
 async function savePrayersToCache(
@@ -48,5 +59,32 @@ async function savePrayersToCache(
   data: GetPrayerResponse
 ): Promise<void> {
   try {
-  } catch (err) {}
+    let existingData = {};
+    try {
+      const rawData = await readTextFile(PRAYER_CACHE_FILE, {
+        baseDir: BaseDirectory.AppData,
+      });
+
+      existingData = JSON.parse(rawData);
+    } catch {
+      existingData = {};
+    }
+
+    // Update cache with new data
+    existingData[city] = data;
+
+    await writeTextFile(
+      PRAYER_CACHE_FILE,
+      JSON.stringify(existingData, null, 2),
+      { baseDir: BaseDirectory.AppData }
+    );
+
+    const contents = JSON.stringify({ notifications: true });
+
+    await writeTextFile("config.json", contents, {
+      baseDir: BaseDirectory.AppConfig,
+    });
+  } catch (error) {
+    console.error("Error saving prayer times to cache:", error);
+  }
 }
