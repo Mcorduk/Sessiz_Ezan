@@ -1,5 +1,6 @@
 import React from "react";
 import { useCountdownTimer } from "../hooks/useCountdownTimer";
+import { useTranslation } from "react-i18next";
 
 export interface TagProps {
   children?: React.ReactNode;
@@ -12,12 +13,14 @@ export default function Tag({
   targetTime,
   variant = "default",
 }: TagProps) {
+  const { t } = useTranslation();
+
   const timeLeft = useCountdownTimer(targetTime);
 
   const getVariantStyles = () => {
     switch (variant) {
       case "popup":
-        return "absolute top-0 left-0 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg";
+        return "absolute top-15 left-0 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg";
       case "badge":
         return "inline-block bg-blue-500 text-white px-3 py-1 rounded-full";
       default:
@@ -26,7 +29,8 @@ export default function Tag({
   };
 
   return (
-    <div className={`relative ${getVariantStyles()}`}>
+    <div className={`absolute ${getVariantStyles()}`}>
+      <p>{t("misc.endOfFast")}</p>
       {targetTime ? timeLeft : children}
     </div>
   );

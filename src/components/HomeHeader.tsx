@@ -28,9 +28,9 @@ export default function HomeHeader({
   }
 
   return (
-    <div className="flex flex-col max-w-fit mx-auto mb-6 text-xl">
+    <div className="flex flex-col max-w-fit mx-auto mb-4 text-xl">
       {/* <h1>{t("greetings.greeting", { name: "Tauri User" })}</h1> */}
-      <p className=" text-xl font-light pb-4">{`${location} · ${today}`}</p>
+      <p className=" text-xl font-light pb-10">{`${location} · ${today}`}</p>
       <h2 className="text-4xl font-normal">
         {t(`prayers.${currentPrayer.name}`)}
       </h2>
