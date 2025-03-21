@@ -1,3 +1,7 @@
+import { BaseDirectory, readTextFile } from "@tauri-apps/plugin-fs";
+import { GetPrayerResponse } from "../types/prayerApi";
+import { PRAYER_CACHE_FILE } from "./const";
+
 /*
   from: how many days from today, can take negative
   to: how many days from "from" date
@@ -25,4 +29,24 @@ export function getDays(from = 0, to = 3) {
 export function capitalizeFirstLetter(str?: string) {
   if (str === undefined) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+async function getPrayersFromCache(
+  city: string
+): Promise<GetPrayerResponse | null> {
+  try {
+    const data = await readTextFile(PRAYER_CACHE_FILE, {
+      baseDir: BaseDirectory.AppData,
+    });
+
+    if (!data) return null;
+  } catch {}
+}
+
+async function savePrayersToCache(
+  city: string,
+  data: GetPrayerResponse
+): Promise<void> {
+  try {
+  } catch (err) {}
 }

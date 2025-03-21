@@ -9,3 +9,5 @@ export const PRAYER_NAMES = {
 export const NON_PRAYER_NAMES = {
   SUNRISE: "sunrise",
 };
+
+export const PRAYER_CACHE_FILE = "prayerTimes.json";
