@@ -3,7 +3,12 @@ import {
   readTextFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
-import { GetPrayerResponse } from "../types/prayerApi";
+import {
+  CityPrayerData,
+  DayPrayerTimes,
+  GetPrayerResponse,
+  PrayerCache,
+} from "../types/prayerApi";
 import { PRAYER_CACHE_FILE } from "./const";
 
 /*
@@ -35,9 +40,9 @@ export function capitalizeFirstLetter(str?: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-async function getPrayersFromCache(
+export async function getPrayersFromCache(
   city: string
-): Promise<GetPrayerResponse | null> {
+): Promise<CityPrayerData | null> {
   try {
     const data = await readTextFile(PRAYER_CACHE_FILE, {
       baseDir: BaseDirectory.AppData,
@@ -45,7 +50,7 @@ async function getPrayersFromCache(
 
     if (!data) return null;
 
-    const parsedData = JSON.parse(data);
+    const parsedData = JSON.parse(data) as PrayerCache;
 
     return parsedData[city] || null;
   } catch (error) {
@@ -54,9 +59,9 @@ async function getPrayersFromCache(
   }
 }
 
-async function savePrayersToCache(
+export async function savePrayersToCache(
   city: string,
-  data: GetPrayerResponse
+  data: CityPrayerData
 ): Promise<void> {
   try {
     let existingData = {};
@@ -65,12 +70,11 @@ async function savePrayersToCache(
         baseDir: BaseDirectory.AppData,
       });
 
-      existingData = JSON.parse(rawData);
+      existingData = JSON.parse(rawData) as PrayerCache;
     } catch {
       existingData = {};
     }
 
-    // Update cache with new data
     existingData[city] = data;
 
     await writeTextFile(
