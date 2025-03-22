@@ -13,6 +13,11 @@ export interface PrayerApiResponse {
     longitude: number;
   };
 }
+
+export interface PrayerApiErrorResponse extends Response {
+  error?: string;
+}
+
 export interface SinglePrayerTime {
   name: string;
   time: string;
@@ -63,4 +68,12 @@ export interface FullPrayerData {
   yesterday: DailyPrayerData;
   today: DailyPrayerData;
   tomorrow: DailyPrayerData;
+}
+
+export interface CityPrayerData {
+  [date: string]: DayPrayerTimes;
+}
+
+export interface PrayerCache {
+  [city: string]: CityPrayerData;
 }
