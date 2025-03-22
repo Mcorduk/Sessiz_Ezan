@@ -7,24 +7,21 @@ import {
   PrayerApiResponse,
 } from "../types/prayerApi";
 import { GetPrayerResponse } from "../types/prayerApi";
-
-interface PrayerApiErrorResponse extends Response {
-  error?: string;
-}
-
-const [yesterday, today, tomorrow] = getDays(-1, 3);
+import { PrayerApiErrorResponse } from "../types/prayerApi";
 
 export async function getPrayer(
   city: string,
   country: string = "Turkey",
   region: string = "İstanbul",
-  date = yesterday,
-  days: number = 3,
+  days: number = 7,
   timezoneOffset: number = 180
 ): Promise<GetPrayerResponse> {
   try {
+    const [yesterday, today, tomorrow] = getDays(-1, 3);
+
     const baseUrl = "https://vakit.vercel.app/api/timesFromPlace";
 
+    const date = yesterday;
     const params = new URLSearchParams({
       country,
       region,
