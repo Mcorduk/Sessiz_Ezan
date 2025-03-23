@@ -3,12 +3,7 @@ import {
   readTextFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
-import {
-  CityPrayerData,
-  DayPrayerTimes,
-  GetPrayerResponse,
-  PrayerCache,
-} from "../types/prayerApi";
+import { CityPrayerData, PrayerCache } from "../types/prayerApi";
 import { PRAYER_CACHE_FILE } from "./const";
 
 /*
@@ -52,7 +47,15 @@ export async function getPrayersFromCache(
 
     const parsedData = JSON.parse(data) as PrayerCache;
 
-    return parsedData[city] || null;
+    const cityData = parsedData[city];
+
+    if (!cityData) return null;
+
+    const isValid = isCacheValid(cityData);
+
+    if (!isValid) return null;
+
+    return cityData;
   } catch (error) {
     console.warn("No cached prayer time found:", error);
     return null;
@@ -90,5 +93,18 @@ export async function savePrayersToCache(
     });
   } catch (error) {
     console.error("Error saving prayer times to cache:", error);
+  }
+}
+
+function isCacheValid(data: CityPrayerData): boolean {
+  try {
+    //Need to have at least tomorrow's date in cache for that city
+    const tomorrow = getDays(1, 1)[0];
+
+    if (!data[tomorrow]) return false;
+
+    return true;
+  } catch {
+    return false;
   }
 }

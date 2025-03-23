@@ -13,7 +13,7 @@ export async function getPrayer(
   city: string,
   country: string = "Turkey",
   region: string = "İstanbul",
-  days: number = 7,
+  days: number = 8,
   timezoneOffset: number = 180
 ): Promise<GetPrayerResponse> {
   try {
