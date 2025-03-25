@@ -53,13 +53,14 @@ export interface PrayerTimes {
 
 export interface DayPrayerTimes extends PrayerTimes {
   date: string;
+  [key: string]: unknown;
 }
 
 export interface FormattedPrayerData {
   [date: string]: PrayerTimes;
 }
 
-interface DailyPrayerData {
+export interface DailyPrayerData {
   date: string;
   prayers: PrayerTimes;
 }
@@ -71,9 +72,9 @@ export interface FullPrayerData {
 }
 
 export interface CityPrayerData {
-  [date: string]: DayPrayerTimes;
+  [date: string]: DayPrayerTimes | null;
 }
 
 export interface PrayerCache {
-  [city: string]: CityPrayerData;
+  [city: string]: CityPrayerData | null;
 }
