@@ -28,14 +28,14 @@ export interface GetPrayerResponse {
   lastPrayer: SinglePrayerTime;
   nextPrayer: SinglePrayerTime;
   todayPrayers: PrayerTimes;
-  place: {
-    country: string;
-    countryCode: string;
-    city: string;
-    region: string;
-    latitude: number;
-    longitude: number;
-  };
+  // place: {
+  //   country: string;
+  //   countryCode: string;
+  //   city: string;
+  //   region: string;
+  //   latitude: number;
+  //   longitude: number;
+  // };
 }
 
 export interface PrayerTimes {
@@ -51,28 +51,14 @@ export interface PrayerTimes {
   };
 }
 
-export interface DayPrayerTimes extends PrayerTimes {
-  date: string;
-  [key: string]: unknown;
-}
-
-export interface FormattedPrayerData {
-  [date: string]: PrayerTimes;
-}
-
-export interface DailyPrayerData {
-  date: string;
-  prayers: PrayerTimes;
-}
-
 export interface FullPrayerData {
-  yesterday: DailyPrayerData;
-  today: DailyPrayerData;
-  tomorrow: DailyPrayerData;
+  yesterday: PrayerTimes;
+  today: PrayerTimes;
+  tomorrow: PrayerTimes;
 }
 
 export interface CityPrayerData {
-  [date: string]: DayPrayerTimes | null;
+  [date: string]: PrayerTimes | null;
 }
 
 export interface PrayerCache {

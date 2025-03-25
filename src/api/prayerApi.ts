@@ -6,11 +6,9 @@ import {
 } from "../helpers/helper";
 import {
   CityPrayerData,
-  DailyPrayerData,
-  DayPrayerTimes,
-  FormattedPrayerData,
   FullPrayerData,
   PrayerApiResponse,
+  PrayerTimes,
 } from "../types/prayerApi";
 import { GetPrayerResponse } from "../types/prayerApi";
 import { PrayerApiErrorResponse } from "../types/prayerApi";
@@ -19,63 +17,34 @@ export async function getPrayer(
   city: string,
   country: string = "Turkey",
   region: string = "İstanbul",
-  days: number = 8,
+  days: number = 9,
   timezoneOffset: number = 180
 ): Promise<GetPrayerResponse> {
   try {
     const [yesterday, today, tomorrow] = getDays(-1, 3);
 
-    const cachedData = await getPrayersFromCache(city);
-    if (cachedData) {
-      console.log("Using cached prayer data...");
+    await updatePrayerCache(city, country, region, days, timezoneOffset);
+
+    const data = await getPrayersFromCache(city);
+
+    if (!data) {
+      throw new Error("Unable to get prayers from cache");
     }
 
-    const baseUrl = "https://vakit.vercel.app/api/timesFromPlace";
-
-    const date = yesterday;
-    const params = new URLSearchParams({
-      country,
-      region,
-      city,
-      date,
-      days: days.toString(),
-      timezoneOffset: timezoneOffset.toString(),
-    });
-
-    const url = `${baseUrl}?${params.toString()}`;
-
-    const response: PrayerApiErrorResponse = await fetch(url, { mode: "cors" });
-
-    if (!response.ok) {
-      throw new Error(
-        response.error
-          ? `Error fetching prayer data: ${response.error}`
-          : "Unknown error fetching prayer data"
-      );
+    if (!data[yesterday] || !data[today] || !data[tomorrow]) {
+      throw new Error("Incomplete prayer data in cache");
     }
-
-    const data = (await response.json()) as PrayerApiResponse;
-    const formattedDays: FormattedPrayerData = formatDaysData(data.times);
-    const todayPrayerTimes = formattedDays[today];
-
-    // if (!todayPrayerTimes) {
-    //   throw new Error("No prayer times found for today.");
-    // }
 
     const yesterdayPrayers = {
       date: yesterday,
-      prayers: formattedDays[yesterday],
+      prayers: data[yesterday].prayers,
     };
-    const todayPrayers = {
-      date: today,
-      prayers: formattedDays[today],
-      nonPrayerTimes: undefined,
-    };
+
     const tomorrowPrayers = {
       date: tomorrow,
-      prayers: formattedDays[tomorrow],
+      prayers: data[tomorrow].prayers,
     };
-    // Get current prayer details from helper function
+
     const { currentPrayer, lastPrayer, nextPrayer } = getCurrentPrayer({
       yesterday: yesterdayPrayers,
       today: todayPrayers,
@@ -87,21 +56,16 @@ export async function getPrayer(
     }
 
     return {
-      place: data.place,
       currentPrayer,
       lastPrayer,
       nextPrayer,
-      todayPrayers: todayPrayerTimes,
+      todayPrayers: data[today],
     };
   } catch (error) {
     console.error("Prayer API error:", error);
     throw error;
   }
 }
-
-// keep the day of when the API call was made in cache, if it's expired make a new call
-// a call should be made everyday(?) (once a week or month is prolly better)
-// times should be put in a storage
 
 export function getCurrentPrayer(prayerData: FullPrayerData): {
   lastPrayer: { name: string; time: string } | null;
@@ -187,8 +151,8 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
 
 function formatDaysData(
   times: PrayerApiResponse["times"]
-): Record<string, DayPrayerTimes> {
-  const formattedData: Record<string, DayPrayerTimes> = {};
+): Record<string, PrayerTimes> {
+  const formattedData: Record<string, PrayerTimes> = {};
 
   for (const [date, prayers] of Object.entries(times)) {
     formattedData[date] = {
@@ -213,7 +177,7 @@ export async function updatePrayerCache(
   city: string,
   country = "Turkey",
   region = "İstanbul",
-  days = 8,
+  days = 9,
   timezoneOffset = 180
 ): Promise<void> {
   try {
@@ -272,8 +236,8 @@ export async function getPrayerData(
 
   const cityData = cachedData[city];
   return {
-    yesterday: (cityData[yesterday] ?? null) as DailyPrayerData,
-    today: (cityData[today] ?? null) as DailyPrayerData,
-    tomorrow: (cityData[tomorrow] ?? null) as DailyPrayerData,
+    yesterday: (cityData[yesterday] ?? null) as PrayerTimes,
+    today: (cityData[today] ?? null) as PrayerTimes,
+    tomorrow: (cityData[tomorrow] ?? null) as PrayerTimes,
   };
 }
