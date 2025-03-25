@@ -39,25 +39,30 @@ export async function getPrayersFromCache(
   city: string
 ): Promise<CityPrayerData | null> {
   try {
+    console.log("Reading prayer cache file...");
     const data = await readTextFile(PRAYER_CACHE_FILE, {
       baseDir: BaseDirectory.AppData,
     });
 
-    if (!data) return null;
+    if (!data) {
+      console.log("No data found in cache.");
+      return null;
+    }
 
+    console.log("Cache data found, parsing...");
     const parsedData = JSON.parse(data) as PrayerCache;
-
     const cityData = parsedData[city];
 
-    if (!cityData) return null;
+    if (!cityData || Object.keys(cityData).length === 0) {
+      console.log(`No valid data found for city: ${city}`);
+      return null;
+    }
 
     const isValid = isCacheValid(cityData);
 
-    if (!isValid) return null;
-
-    return cityData;
+    return isValid ? cityData : null;
   } catch (error) {
-    console.warn("No cached prayer time found:", error);
+    console.warn("Error reading prayer cache:", error);
     return null;
   }
 }
@@ -67,30 +72,30 @@ export async function savePrayersToCache(
   data: CityPrayerData
 ): Promise<void> {
   try {
+    console.log("Preparing to save prayer cache...");
+
     let existingData = {};
     try {
+      console.log("Reading existing prayer cache...");
       const rawData = await readTextFile(PRAYER_CACHE_FILE, {
         baseDir: BaseDirectory.AppData,
       });
 
       existingData = JSON.parse(rawData) as PrayerCache;
-    } catch {
+    } catch (error) {
+      console.log("No existing cache found. Creating a new one.", error);
       existingData = {};
     }
 
     existingData[city] = data;
 
+    console.log("Writing updated data to cache...");
     await writeTextFile(
       PRAYER_CACHE_FILE,
       JSON.stringify(existingData, null, 2),
       { baseDir: BaseDirectory.AppData }
     );
-
-    const contents = JSON.stringify({ notifications: true });
-
-    await writeTextFile("config.json", contents, {
-      baseDir: BaseDirectory.AppConfig,
-    });
+    console.log("Prayer cache file written successfully.");
   } catch (error) {
     console.error("Error saving prayer times to cache:", error);
   }
