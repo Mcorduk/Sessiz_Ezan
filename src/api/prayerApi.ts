@@ -1,6 +1,12 @@
 import { NON_PRAYER_NAMES, PRAYER_NAMES } from "../helpers/const";
-import { getDays } from "../helpers/helper";
 import {
+  getDays,
+  getPrayersFromCache,
+  savePrayersToCache,
+} from "../helpers/helper";
+import {
+  CityPrayerData,
+  DailyPrayerData,
   DayPrayerTimes,
   FormattedPrayerData,
   FullPrayerData,
@@ -18,6 +24,11 @@ export async function getPrayer(
 ): Promise<GetPrayerResponse> {
   try {
     const [yesterday, today, tomorrow] = getDays(-1, 3);
+
+    const cachedData = await getPrayersFromCache(city);
+    if (cachedData) {
+      console.log("Using cached prayer data...");
+    }
 
     const baseUrl = "https://vakit.vercel.app/api/timesFromPlace";
 
@@ -196,4 +207,73 @@ function formatDaysData(
   }
 
   return formattedData;
+}
+
+export async function updatePrayerCache(
+  city: string,
+  country = "Turkey",
+  region = "İstanbul",
+  days = 8,
+  timezoneOffset = 180
+): Promise<void> {
+  try {
+    // Check existing cache
+    const cachedData: CityPrayerData | null = await getPrayersFromCache(city);
+    if (cachedData !== null && cachedData[city]) {
+      console.log("Cache is valid, skipping API call.");
+      return;
+    }
+
+    console.log("Fetching fresh prayer data...");
+
+    const baseUrl = "https://vakit.vercel.app/api/timesFromPlace";
+    const params = new URLSearchParams({
+      country,
+      region,
+      city,
+      days: days.toString(),
+      timezoneOffset: timezoneOffset.toString(),
+    });
+    const response: PrayerApiErrorResponse = await fetch(
+      `${baseUrl}?${params.toString()}`,
+      {
+        mode: "cors",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        response.error
+          ? `Error fetching prayer data: ${response.error}`
+          : "Unknown error fetching prayer data"
+      );
+    }
+
+    const data = (await response.json()) as PrayerApiResponse;
+    const formattedDays: CityPrayerData = formatDaysData(data.times);
+
+    await savePrayersToCache(city, formattedDays);
+    console.log("Cache updated successfully.");
+  } catch (error) {
+    console.error("Error updating prayer cache:", error);
+  }
+}
+
+export async function getPrayerData(
+  city: string
+): Promise<FullPrayerData | null> {
+  const cachedData: CityPrayerData | null = await getPrayersFromCache(city);
+  if (cachedData === null || !cachedData[city]) {
+    console.warn("No cached data available for this city.");
+    return null;
+  }
+
+  const [yesterday, today, tomorrow] = getDays(-1, 3);
+
+  const cityData = cachedData[city];
+  return {
+    yesterday: (cityData[yesterday] ?? null) as DailyPrayerData,
+    today: (cityData[today] ?? null) as DailyPrayerData,
+    tomorrow: (cityData[tomorrow] ?? null) as DailyPrayerData,
+  };
 }
