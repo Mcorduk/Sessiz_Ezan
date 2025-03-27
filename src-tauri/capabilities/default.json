@@ -6,7 +6,26 @@
   "permissions": [
     "core:default",
     "opener:default",
-    "fs:default",
+    {
+      "identifier": "fs:allow-write-text-file",
+      "allow": [
+        {
+          "path": "$APPDATA/*",
+          "permission": "read-write-create"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        {
+          "path": "$APPDATA/*",
+          "permission": "read-write-create"
+        }
+      ]
+    },
+    "fs:allow-create",
+    "fs:read-all",
     "fs:write-all"
   ]
 }
