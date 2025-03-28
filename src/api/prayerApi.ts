@@ -188,6 +188,8 @@ export async function updatePrayerCache(
       return;
     }
 
+    const [yesterday] = getDays(-1, 1);
+
     console.log("Fetching fresh prayer data...");
 
     const baseUrl = "https://vakit.vercel.app/api/timesFromPlace";
@@ -197,6 +199,7 @@ export async function updatePrayerCache(
       city,
       days: days.toString(),
       timezoneOffset: timezoneOffset.toString(),
+      date: yesterday,
     });
     const response: PrayerApiErrorResponse = await fetch(
       `${baseUrl}?${params.toString()}`,
