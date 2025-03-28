@@ -40,6 +40,11 @@ export async function getPrayer(
       prayers: data[yesterday].prayers,
     };
 
+    const todayPrayers = {
+      date: today,
+      prayers: data[today].prayers,
+    };
+
     const tomorrowPrayers = {
       date: tomorrow,
       prayers: data[tomorrow].prayers,
@@ -80,7 +85,8 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
   const todayPrayers = prayerData.today.prayers;
   const tomorrowPrayers = prayerData.tomorrow.prayers;
 
-  const prayerEntries = Object.entries(todayPrayers.prayers);
+  const prayerEntries = Object.entries(todayPrayers);
+  console.log(prayerEntries);
 
   let lastPrayer = null;
   let currentPrayer = null;
