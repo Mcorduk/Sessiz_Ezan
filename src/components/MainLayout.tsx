@@ -24,7 +24,7 @@ export function MainLayout() {
     async function fetchPrayerData() {
       try {
         const data = await getPrayer(city);
-        setCity(data.place.city);
+        setCity("İstanbul");
 
         setCurrentPrayer(data.currentPrayer);
         setTodayPrayers(data.todayPrayers);

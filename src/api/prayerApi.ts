@@ -86,7 +86,6 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
   const tomorrowPrayers = prayerData.tomorrow.prayers;
 
   const prayerEntries = Object.entries(todayPrayers);
-  console.log(prayerEntries);
 
   let lastPrayer = null;
   let currentPrayer = null;
@@ -189,7 +188,8 @@ export async function updatePrayerCache(
   try {
     // Check existing cache
     const cachedData: CityPrayerData | null = await getPrayersFromCache(city);
-    if (cachedData !== null && cachedData[city]) {
+    console.log(cachedData);
+    if (cachedData !== null) {
       console.log("Cache is valid, skipping API call.");
       return;
     }
