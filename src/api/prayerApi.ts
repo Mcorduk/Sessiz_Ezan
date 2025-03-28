@@ -1,17 +1,15 @@
-import { NON_PRAYER_NAMES, PRAYER_NAMES } from "../helpers/const";
+import { PRAYER_NAMES } from "../helpers/const";
 import {
   getDays,
   getPrayersFromCache,
-  savePrayersToCache,
+  updatePrayerCache,
 } from "../helpers/helper";
 import {
   CityPrayerData,
   FullPrayerData,
-  PrayerApiResponse,
   PrayerTimes,
 } from "../types/prayerApi";
 import { GetPrayerResponse } from "../types/prayerApi";
-import { PrayerApiErrorResponse } from "../types/prayerApi";
 
 export async function getPrayer(
   city: string,
@@ -152,84 +150,6 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
   }
 
   return { lastPrayer, currentPrayer, nextPrayer };
-}
-
-function formatDaysData(
-  times: PrayerApiResponse["times"]
-): Record<string, PrayerTimes> {
-  const formattedData: Record<string, PrayerTimes> = {};
-
-  for (const [date, prayers] of Object.entries(times)) {
-    formattedData[date] = {
-      date,
-      prayers: {
-        [PRAYER_NAMES.FAJR]: prayers[0],
-        [PRAYER_NAMES.DHUHR]: prayers[2],
-        [PRAYER_NAMES.ASR]: prayers[3],
-        [PRAYER_NAMES.MAGHRIB]: prayers[4],
-        [PRAYER_NAMES.ISHA]: prayers[5],
-      },
-      nonPrayerTimes: {
-        [NON_PRAYER_NAMES.SUNRISE]: prayers[1],
-      },
-    };
-  }
-
-  return formattedData;
-}
-
-export async function updatePrayerCache(
-  city: string,
-  country = "Turkey",
-  region = "İstanbul",
-  days = 9,
-  timezoneOffset = 180
-): Promise<void> {
-  try {
-    // Check existing cache
-    const cachedData: CityPrayerData | null = await getPrayersFromCache(city);
-    console.log(cachedData);
-    if (cachedData !== null) {
-      console.log("Cache is valid, skipping API call.");
-      return;
-    }
-
-    const [yesterday] = getDays(-1, 1);
-
-    console.log("Fetching fresh prayer data...");
-
-    const baseUrl = "https://vakit.vercel.app/api/timesFromPlace";
-    const params = new URLSearchParams({
-      country,
-      region,
-      city,
-      days: days.toString(),
-      timezoneOffset: timezoneOffset.toString(),
-      date: yesterday,
-    });
-    const response: PrayerApiErrorResponse = await fetch(
-      `${baseUrl}?${params.toString()}`,
-      {
-        mode: "cors",
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        response.error
-          ? `Error fetching prayer data: ${response.error}`
-          : "Unknown error fetching prayer data"
-      );
-    }
-
-    const data = (await response.json()) as PrayerApiResponse;
-    const formattedDays: CityPrayerData = formatDaysData(data.times);
-
-    await savePrayersToCache(city, formattedDays);
-    console.log("Cache updated successfully.");
-  } catch (error) {
-    console.error("Error updating prayer cache:", error);
-  }
 }
 
 export async function getPrayerData(
