@@ -1,9 +1,6 @@
 import { PRAYER_NAMES } from "../helpers/const";
-import {
-  getDays,
-  getPrayersFromCache,
-  updatePrayerCache,
-} from "../helpers/helper";
+import { getDays } from "../helpers/helper";
+import { getPrayersFromCache, updatePrayerCache } from "../helpers/cache";
 import {
   CityPrayerData,
   FullPrayerData,
