@@ -13,14 +13,14 @@ export function usePrayerTimeRefresh(
     const msUntilUpdate = nextUpdateTime.getTime() - now.getTime();
 
     if (msUntilUpdate > 0) {
-      timerRef.current = setTimeout(() => {
+      timerRef.current = window.setTimeout(() => {
         refreshCallback();
       }, msUntilUpdate);
     }
 
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
+      if (timerRef.current !== undefined) {
+        window.clearTimeout(timerRef.current);
       }
     };
   }, [nextUpdateTime, refreshCallback]);

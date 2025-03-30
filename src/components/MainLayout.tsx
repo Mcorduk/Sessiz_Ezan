@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import HorizontalForecast from "./HorizontalForecast";
 import Tag from "./Tag";
 import { PRAYER_NAMES } from "../helpers/const";
+import { usePrayerTimeRefresh } from "../hooks/usePrayerTimeRefresh";
 
 export function MainLayout() {
   const { t } = useTranslation();
@@ -17,8 +18,15 @@ export function MainLayout() {
   const [nextPrayer, setNextPrayer] = useState<SinglePrayerTime | null>(null);
   const [lastPrayer, setLastPrayer] = useState<SinglePrayerTime | null>(null);
   const [todayPrayers, setTodayPrayers] = useState<PrayerTimes | null>(null);
+  const [nextUpdateTime, setNextUpdateTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const refreshPrayerData = () => {
+    setCity((prevCity) => prevCity);
+  };
+
+  usePrayerTimeRefresh(nextUpdateTime, refreshPrayerData);
 
   useEffect(() => {
     async function fetchPrayerData() {
@@ -31,6 +39,18 @@ export function MainLayout() {
         setLastPrayer(data.lastPrayer);
         setNextPrayer(data.nextPrayer);
         setTodayPrayers(data.todayPrayers);
+
+        if (data.nextPrayer) {
+          const [hours, minutes] = data.nextPrayer.time.split(":").map(Number);
+          const nextUpdate = new Date();
+          nextUpdate.setHours(hours, minutes, 0, 0);
+
+          if (nextUpdate < new Date()) {
+            nextUpdate.setDate(nextUpdate.getDate() + 1);
+          }
+
+          setNextUpdateTime(nextUpdate);
+        }
       } catch (err) {
         setError("Failed to fetch prayer data.");
         console.error(err);
