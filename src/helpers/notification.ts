@@ -14,14 +14,14 @@ export async function checkNotificationPermission(): Promise<boolean> {
 }
 
 export async function sendPrayerNotification(
-  prayerName: string
+  prayerName: string | undefined
 ): Promise<void> {
   try {
     const permissionGranted = await checkNotificationPermission();
     if (permissionGranted) {
       sendNotification({
         title: "Prayer Time Alert",
-        body: `It's time for ${prayerName} prayer`,
+        body: `It's time for ${prayerName ? prayerName : ""} prayer`,
         icon: "icon.png",
       });
     }

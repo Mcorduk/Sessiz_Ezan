@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import HomeHeader from "./HomeHeader";
-import { getPrayer } from "../api/prayerApi"; // Import your API function
+import { getPrayer } from "../api/prayerApi";
 import { PrayerTimes, SinglePrayerTime } from "../types/prayerApi";
 import { useTranslation } from "react-i18next";
 import HorizontalForecast from "./HorizontalForecast";
 import Tag from "./Tag";
 import { PRAYER_NAMES } from "../helpers/const";
 import { usePrayerTimeRefresh } from "../hooks/usePrayerTimeRefresh";
+import { sendPrayerNotification } from "../helpers/notification";
 
 export function MainLayout() {
   const { t } = useTranslation();
@@ -21,46 +22,57 @@ export function MainLayout() {
   const [nextUpdateTime, setNextUpdateTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [prevPrayer, setPrevPrayer] = useState<string | null>(null);
 
-  const refreshPrayerData = () => {
-    setCity((prevCity) => prevCity);
-  };
+  const refreshPrayerData = useCallback(async () => {
+    try {
+      const data = await getPrayer(city);
+
+      // Send notification if prayer changed
+      if (prevPrayer && prevPrayer !== data.currentPrayer.name) {
+        await sendPrayerNotification(data.currentPrayer.name);
+      }
+      setPrevPrayer(data.currentPrayer.name);
+
+      // Update all states
+      setCurrentPrayer(data.currentPrayer);
+      setNextPrayer(data.nextPrayer);
+      setLastPrayer(data.lastPrayer);
+      setTodayPrayers(data.todayPrayers);
+
+      // Set next update time
+      const [hours, minutes] = data.nextPrayer.time.split(":").map(Number);
+      const nextUpdate = new Date();
+      nextUpdate.setHours(hours, minutes, 0, 0);
+
+      if (nextUpdate < new Date()) {
+        nextUpdate.setDate(nextUpdate.getDate() + 1);
+      }
+
+      setNextUpdateTime(nextUpdate);
+    } catch (err) {
+      setError("Failed to fetch prayer data.");
+      console.error(err);
+    }
+  }, [city, prevPrayer]);
 
   usePrayerTimeRefresh(nextUpdateTime, refreshPrayerData);
 
   useEffect(() => {
-    async function fetchPrayerData() {
+    const initialize = async () => {
       try {
-        const data = await getPrayer(city);
-        setCity("İstanbul");
-
-        setCurrentPrayer(data.currentPrayer);
-        setTodayPrayers(data.todayPrayers);
-        setLastPrayer(data.lastPrayer);
-        setNextPrayer(data.nextPrayer);
-        setTodayPrayers(data.todayPrayers);
-
-        if (data.nextPrayer) {
-          const [hours, minutes] = data.nextPrayer.time.split(":").map(Number);
-          const nextUpdate = new Date();
-          nextUpdate.setHours(hours, minutes, 0, 0);
-
-          if (nextUpdate < new Date()) {
-            nextUpdate.setDate(nextUpdate.getDate() + 1);
-          }
-
-          setNextUpdateTime(nextUpdate);
-        }
+        await sendPrayerNotification(currentPrayer?.name);
+        await refreshPrayerData();
       } catch (err) {
-        setError("Failed to fetch prayer data.");
+        setError("Initialization failed.");
         console.error(err);
       } finally {
         setIsLoading(false);
       }
-    }
+    };
 
-    void fetchPrayerData();
-  }, [city]);
+    void initialize();
+  }, [refreshPrayerData, currentPrayer]);
 
   const timeLeftToFast = "02:12";
   if (isLoading) return <p>{t("homeLoading")}</p>;
