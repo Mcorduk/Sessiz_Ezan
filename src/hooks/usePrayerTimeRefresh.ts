@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 export function usePrayerTimeRefresh(
   nextUpdateTime: Date | null,
-  refreshCallback: () => void
+  refreshCallback: () => Promise<void>
 ) {
   const timerRef = useRef<number>();
 
@@ -14,12 +14,14 @@ export function usePrayerTimeRefresh(
 
     if (msUntilUpdate > 0) {
       timerRef.current = window.setTimeout(() => {
-        refreshCallback();
+        void refreshCallback();
       }, msUntilUpdate);
+    } else {
+      void refreshCallback();
     }
 
     return () => {
-      if (timerRef.current !== undefined) {
+      if (timerRef.current) {
         window.clearTimeout(timerRef.current);
       }
     };
