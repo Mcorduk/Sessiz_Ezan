@@ -22,22 +22,20 @@ export function MainLayout() {
   const [nextUpdateTime, setNextUpdateTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [prevPrayer, setPrevPrayer] = useState<string | null>(null);
 
   const refreshPrayerData = useCallback(async () => {
     try {
-      const data = await getPrayer(city);
+      const data = await getPrayer("İstanbul"); //FIXME make me dynamic without infinite render loop
 
-      // Send notification if prayer changed
-      if (prevPrayer && prevPrayer !== data.currentPrayer.name) {
-        await sendPrayerNotification(data.currentPrayer.name);
-      }
-      setPrevPrayer(data.currentPrayer.name);
+      setLastPrayer((prev) =>
+        prev?.name !== data.lastPrayer.name ? data.lastPrayer : prev
+      );
 
       // Update all states
-      setCurrentPrayer(data.currentPrayer);
+      setCurrentPrayer((prev) =>
+        prev?.name !== data.currentPrayer.name ? data.currentPrayer : prev
+      );
       setNextPrayer(data.nextPrayer);
-      setLastPrayer(data.lastPrayer);
       setTodayPrayers(data.todayPrayers);
 
       // Set next update time
@@ -54,7 +52,7 @@ export function MainLayout() {
       setError("Failed to fetch prayer data.");
       console.error(err);
     }
-  }, [city, prevPrayer]);
+  }, []);
 
   usePrayerTimeRefresh(nextUpdateTime, refreshPrayerData);
 
