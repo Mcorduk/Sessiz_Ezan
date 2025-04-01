@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import HomeHeader from "./HomeHeader";
 import { getPrayer } from "../api/prayerApi";
 import { PrayerTimes, SinglePrayerTime } from "../types/prayerApi";
@@ -8,10 +8,12 @@ import Tag from "./Tag";
 import { PRAYER_NAMES } from "../helpers/const";
 import { usePrayerTimeRefresh } from "../hooks/usePrayerTimeRefresh";
 import { sendPrayerNotification } from "../helpers/notification";
+import { checkRamadan } from "../api/ramadanApi";
 
 export function MainLayout() {
   const { t } = useTranslation();
 
+  const [isRamadan, setIsRamadan] = useState(false);
   const [city, setCity] = useState("İstanbul");
   const [currentPrayer, setCurrentPrayer] = useState<SinglePrayerTime | null>(
     null
@@ -72,6 +74,18 @@ export function MainLayout() {
     void initialize();
   }, [refreshPrayerData, currentPrayer]);
 
+  useEffect(() => {
+    const fetchRamadanStatus = async () => {
+      try {
+        const data = await checkRamadan();
+        setIsRamadan(data);
+      } catch (err) {
+        console.error("Failed to fetch Ramadan status", err);
+      }
+    };
+    void fetchRamadanStatus();
+  }, []); // ✅ Runs only once
+
   const timeLeftToFast = "02:12";
   if (isLoading) return <p>{t("homeLoading")}</p>;
   if (error || !currentPrayer)
@@ -79,10 +93,14 @@ export function MainLayout() {
 
   return (
     <div className="bg-[url(/src/assets/images/background.png)] font-serif w-sm h-3/5 min-h-[800px] m-auto flex flex-col justify-start relative py-6 rounded-3xl">
-      <Tag
-        variant="popup"
-        targetTime={todayPrayers?.prayers[PRAYER_NAMES.MAGHRIB]}
-      >{`${t("misc.endOfFast")}: ${timeLeftToFast}`}</Tag>
+      {isRamadan ? (
+        <Tag
+          variant="popup"
+          targetTime={todayPrayers?.prayers[PRAYER_NAMES.MAGHRIB]}
+        >{`${t("misc.endOfFast")}: ${timeLeftToFast}`}</Tag>
+      ) : (
+        ""
+      )}
       <HomeHeader
         currentPrayer={currentPrayer}
         location={city}
