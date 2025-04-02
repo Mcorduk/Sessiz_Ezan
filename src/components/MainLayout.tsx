@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import HomeHeader from "./HomeHeader";
 import { getPrayer } from "../api/prayerApi";
 import { PrayerTimes, SinglePrayerTime } from "../types/prayerApi";
@@ -43,6 +43,13 @@ export function MainLayout() {
       // Set next update time
       const [hours, minutes] = data.nextPrayer.time.split(":").map(Number);
       const nextUpdate = new Date();
+
+      console.log("[Time] Current time:", new Date());
+      console.log("[Time] Calculated next update:", nextUpdate);
+      console.log(
+        "[Time] Time difference (ms):",
+        nextUpdate.getTime() - new Date().getTime()
+      );
       nextUpdate.setHours(hours, minutes, 0, 0);
 
       if (nextUpdate < new Date()) {
