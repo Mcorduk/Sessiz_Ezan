@@ -20,6 +20,7 @@ export default function HomeHeader({
 
   const locale = i18n.language === "tr" ? tr : enUS;
   const today = format(new Date(), "MMMM dd, y", { locale });
+  // const timeLeft = useCountdownTimer(nextPrayer?.time);
 
   if (!lastPrayer) {
     throw new Error("Last Prayer data not found");
@@ -31,6 +32,7 @@ export default function HomeHeader({
     <div className="flex flex-col max-w-fit mx-auto mb-4 text-xl">
       {/* <h1>{t("greetings.greeting", { name: "Tauri User" })}</h1> */}
       <p className=" text-xl font-light pb-10">{`${location} · ${today}`}</p>
+      <p>Time left until next prayer: </p>
       <h2 className="text-4xl font-normal">
         {t(`prayers.${currentPrayer.name}`)}
       </h2>
