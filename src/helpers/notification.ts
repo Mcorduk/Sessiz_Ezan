@@ -22,7 +22,7 @@ export async function sendPrayerNotification(
       sendNotification({
         title: "Prayer Time Alert",
         body: `It's time for ${prayerName ? prayerName : ""} prayer`,
-        icon: "icon.png",
+        icon: "icons/icon.png",
       });
     }
   } catch (error) {
