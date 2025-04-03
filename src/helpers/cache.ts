@@ -11,6 +11,7 @@ import {
 } from "../types/prayerApi";
 import { PRAYER_CACHE_FILE } from "./const";
 import { formatDaysData, getDays } from "./helper";
+import { fetch } from "@tauri-apps/plugin-http";
 
 export async function updatePrayerCache(
   city: string,
