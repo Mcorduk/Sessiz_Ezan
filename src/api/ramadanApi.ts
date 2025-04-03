@@ -1,9 +1,9 @@
 import { RamadanResponse } from "../types/ramadanApi";
+import { fetch } from "@tauri-apps/plugin-http";
 
 export async function checkRamadan(): Promise<boolean> {
   try {
-    const baseUrl =
-      "https://workers-playground-morning-butterfly-7687.o-muhammetcorduk.workers.dev/https://ramadan.munafio.com/api/check";
+    const baseUrl = "https://ramadan.munafio.com/api/check";
 
     const response = await fetch(baseUrl, { mode: "cors" });
 
