@@ -52,8 +52,10 @@ export async function getPrayer(
     });
 
     if (!currentPrayer || !lastPrayer || !nextPrayer) {
+      console.log(currentPrayer, lastPrayer, nextPrayer);
       throw new Error("No Prayer info");
     }
+    console.log(data);
 
     return {
       currentPrayer,
