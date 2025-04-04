@@ -8,7 +8,10 @@
     "opener:default",
     {
       "identifier": "http:default",
-      "allow": [{ "url": "https://ramadan.munafio.com/api/check" }],
+      "allow": [
+        { "url": "https://ramadan.munafio.com/api/check" },
+        { "url": "https://vakit.vercel.app/" }
+      ],
       "deny": [{ "url": "https://private.tauri.app" }]
     },
     {
