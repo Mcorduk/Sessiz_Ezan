@@ -105,6 +105,13 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
         : null;
     }
   }
+  console.log(tomorrowPrayers);
+  if (currentPrayer?.name === PRAYER_NAMES.ISHA) {
+    nextPrayer = {
+      name: PRAYER_NAMES.FAJR,
+      time: tomorrowPrayers["fajr"],
+    };
+  }
 
   // Handling special cases for Fajr and Isha
   if (currentPrayer?.name === PRAYER_NAMES.FAJR) {
