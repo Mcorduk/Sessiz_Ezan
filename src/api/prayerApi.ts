@@ -52,10 +52,8 @@ export async function getPrayer(
     });
 
     if (!currentPrayer || !lastPrayer || !nextPrayer) {
-      console.log(currentPrayer, lastPrayer, nextPrayer);
       throw new Error("No Prayer info");
     }
-    console.log(data);
 
     return {
       currentPrayer,
@@ -105,7 +103,6 @@ export function getCurrentPrayer(prayerData: FullPrayerData): {
         : null;
     }
   }
-  console.log(tomorrowPrayers);
   if (currentPrayer?.name === PRAYER_NAMES.ISHA) {
     nextPrayer = {
       name: PRAYER_NAMES.FAJR,
